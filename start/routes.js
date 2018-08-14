@@ -16,3 +16,5 @@
 const Route = use('Route')
 
 Route.on('/').render('welcome')
+Route.resource('/oy/api/tags','TagController')
+Route.resource('/oy/api/todolist','TodoListController')
