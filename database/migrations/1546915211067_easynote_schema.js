@@ -1,17 +1,13 @@
 'use strict'
 
+/** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
-class TodoListSchema extends Schema {
+class EasynoteSchema extends Schema {
   up() {
-    this.create('todo_lists', (table) => {
+    this.create('easynotes', (table) => {
       table.increments()
-      table.string('title')
       table.text('todo')
-      table.string('type')
-      table.dateTime('planningTime')
-      table.dateTime('finishTime')
-      table.boolean('isFinished')
       table.integer('user_id').unsigned() //unsigned为无符号整数
       table.foreign('user_id').references('users.id') //将已存在的键设置为外键，和references搭配使用
       table.timestamps()
@@ -19,8 +15,8 @@ class TodoListSchema extends Schema {
   }
 
   down() {
-    this.drop('todo_lists')
+    this.drop('easynotes')
   }
 }
 
-module.exports = TodoListSchema
+module.exports = EasynoteSchema

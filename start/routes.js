@@ -16,5 +16,14 @@
 const Route = use('Route')
 
 Route.on('/').render('welcome')
-Route.resource('/oy/api/tags','TagController')
-Route.resource('/oy/api/todolist','TodoListController')
+Route.group('advertisement', function () {
+  Route.resource('/tags', 'TagController')
+  Route.resource('/todolist', 'TodoListController')
+  Route.resource('/easynote', 'EasynoteController')
+}).prefix('oy/api').middleware('permission')
+
+Route.resource('oy/api/user', 'UserController')
+// 登录
+Route.post('oy/api/login', 'UserController.login')
+// 登出
+Route.post('oy/api/logout', 'UserController.logout')

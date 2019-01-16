@@ -16,23 +16,26 @@ class TagSeeder {
   async run() {
     const tags = [
       {
-        tag:'学习'
+        tag: '学习'
       },
       {
-        tag:'工作'
+        tag: '工作'
       },
       {
-        tag:'生活'
+        tag: '生活'
       },
       {
-        tag:'文章'
+        tag: '文章'
       },
       {
-        tag:'大数据'
+        tag: '大数据'
       },
       {
-        tag:'todoList'
+        tag: 'TODO'
       },
+      {
+        tag: '吃'
+      }
     ]
 
     await Tag.createMany(tags)
