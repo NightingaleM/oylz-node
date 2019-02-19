@@ -11,18 +11,26 @@ class Permission {
    */
   async handle({ request, response, auth }, next) {
     // call next to advance the request
+    let user
     try {
+      console.log('-------start-------')
       let check = await auth.check()
-      let user = await auth.getUser()
-      console.log(request.url())
-      console.log(request.method())
-      console.log('--------end--------')
-      await next()
+      user = await auth.getUser()
     } catch (e) {
       console.log(e)
       console.log('you need login')
       response.status(403).json({
         message: '请登录！'
+      })
+    }
+    try {
+      request.userInfo = user
+      await next()
+    } catch (e) {
+      console.log(e)
+      response.status(502).json({
+        message: 'bad request!!',
+        error: e
       })
     }
   }

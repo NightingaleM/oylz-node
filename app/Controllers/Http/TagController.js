@@ -3,7 +3,7 @@
 
 const Tag = use('App/Models/Tag')
 class TagController {
-  async index() {
+  async index({ request }) {
     let tags = await Tag.query().select(['tag', 'id'])
     return tags
   }

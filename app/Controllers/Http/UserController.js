@@ -1,6 +1,6 @@
 'use strict'
 const User = use('App/Models/User')
-const { validate, validateAll } = use('Validator')
+const { validate, validateAll } = use('Validator') // 用于表单验证
 
 class UserController {
   /**
@@ -25,24 +25,30 @@ class UserController {
   async store({ request, response, session }) {
     const rules = {
       username: 'required|unique:users',// required=>必填,unique:users=>这个字段在users表中应该是唯一的值
-      email: 'required|unique:users',
-      password: 'required|min:6|max:30',// min=>最小长度,max=>最大长度
+      email: 'required|unique:email',
+      password: 'required|min:8|max:30',// min=>最小长度,max=>最大长度
     }
     const validation = await validateAll(request.all(), rules)
-    console.log(session)
     if (validation.fails()) {
       session
         .withErrors(validation.messages())
         .flashAll()// 把请求的数据放回flashStore，避免用户重新输入
 
-      return response.json({
+      return response.status(412).json({
         message: validation.messages(),
         result: null
       })
     }
     const newUserInfo = request.only(['username', 'email', 'password', 'sex'])
     const user = await User.create(newUserInfo)
-    return user
+    return {
+      message: 'register success',
+      user: {
+        username: user.username,
+        email: user.email,
+        sex: user.sex
+      }
+    }
   }
 
   /**
@@ -82,7 +88,6 @@ class UserController {
     const { email, password } = request.all()
     await auth.attempt(email, password)
     const user = await auth.getUser()
-    console.log(user)
     response.status(200).json({
       message: 'login success',
       result: {

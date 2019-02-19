@@ -5,7 +5,7 @@ const Schema = use('Schema')
 
 class TagEasynotSchema extends Schema {
   up() {
-    this.create('tag_easynots', (table) => {
+    this.create('easynote_tag', (table) => {
       table.increments()
       table.integer('easynote_id').unsigned()
       table.foreign('easynote_id').references('easynotes.id')
@@ -16,7 +16,7 @@ class TagEasynotSchema extends Schema {
   }
 
   down() {
-    this.drop('tag_easynots')
+    this.drop('easynote_tag')
   }
 }
 

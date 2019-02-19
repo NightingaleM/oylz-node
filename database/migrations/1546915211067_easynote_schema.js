@@ -7,7 +7,7 @@ class EasynoteSchema extends Schema {
   up() {
     this.create('easynotes', (table) => {
       table.increments()
-      table.text('todo')
+      table.text('note')
       table.integer('user_id').unsigned() //unsigned为无符号整数
       table.foreign('user_id').references('users.id') //将已存在的键设置为外键，和references搭配使用
       table.timestamps()
