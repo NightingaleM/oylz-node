@@ -25,20 +25,21 @@ class UserController {
   async store({ request, response, session }) {
     const rules = {
       username: 'required|unique:users',// required=>必填,unique:users=>这个字段在users表中应该是唯一的值
-      email: 'required|unique:email',
+      email: 'required|unique:users', // unique:email=>这个字段在users表中应该是唯一的值
       password: 'required|min:8|max:30',// min=>最小长度,max=>最大长度
     }
     const validation = await validateAll(request.all(), rules)
+
     if (validation.fails()) {
       session
         .withErrors(validation.messages())
-        .flashAll()// 把请求的数据放回flashStore，避免用户重新输入
 
       return response.status(412).json({
         message: validation.messages(),
         result: null
       })
     }
+    console.log("ffffffffffffffffffffff")
     const newUserInfo = request.only(['username', 'email', 'password', 'sex'])
     const user = await User.create(newUserInfo)
     return {
@@ -109,6 +110,12 @@ class UserController {
       message: 'logout success',
       result: logout
     })
+  }
+  /**
+   * Check user status
+   */
+  async checkUserStatus() {
+    return 'ok'
   }
 }
 

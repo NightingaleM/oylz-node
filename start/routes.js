@@ -21,6 +21,8 @@ Route.group('advertisement', function () {
   Route.resource('/tags', 'TagController')
   Route.resource('/todolist', 'TodoListController')
   Route.resource('/easynote', 'EasynoteController')
+  // 检测登录状态
+  Route.post('/check', 'UserController.checkUserStatus')
 }).prefix('oy/api').middleware('permission')
 
 Route.resource('oy/api/user', 'UserController')

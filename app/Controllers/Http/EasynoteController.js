@@ -9,8 +9,9 @@ class EasynoteController {
  * GET easynote
  */
   async index({ request, response, view }) {
-    const { isSelf = true, page = 1, cout = 20, keywords = "", tags = '' } = request.all()
+    const { isSelf, page = 1, cout = 20, keywords = "", tags = '' } = request.all()
     const keywordList = keywords ? keywords.split(',') : null
+    const uid = request.userInfo.id
     const tagList = tags ? tags.split(',').sort().map(item => parseInt(item)) : null
     let finaliyTagList = []
     console.log(isSelf, page, cout, keywordList, tagList)
@@ -49,13 +50,15 @@ class EasynoteController {
     let noteRes = await Easynote.query()
       .orderBy('id', 'desc')
       .where(builder => {
-        if (finaliyTagList.length) {
-          builder.where('id', 'in', finaliyTagList)
-        }
+        if (finaliyTagList.length) builder.where('id', 'in', finaliyTagList);
         if (keywordList) {
           keywordList.forEach(item => {
             builder.where('note', 'like', `%${item}%`)
           })
+        }
+        if (isSelf === 'true') {
+          console.log(isSelf)
+          builder.where('user_id', uid)
         }
         return builder
       })
@@ -109,6 +112,25 @@ class EasynoteController {
    * GET easynote/:id
    */
   async show({ params, request, response, view }) {
+    const { id } = params
+    let detailRes = await Easynote.query()
+      .where('id', id)
+      .with('user')
+      .with('tags')
+      .fetch();
+    console.log(detailRes.rows[0].note.replace(/\n|\r/g, '<br>'))
+    let detail = {
+      created_at: detailRes.rows[0].created_at,
+      id: detailRes.rows[0].id,
+      note: detailRes.rows[0].note.replace(/\n|\r/g, '<br>'),
+      usernames: detailRes.rows[0]['$relations'].user.username.split(''),
+      usersex: detailRes.rows[0]['$relations'].user.sex,
+      tags: detailRes.rows[0]['$relations'].tags
+    }
+    response.json({
+      message: 'success',
+      result: detail
+    })
   }
 
   /**
