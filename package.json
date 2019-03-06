@@ -6,7 +6,18 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "test": "node ace test"
+    "test": "node ace test",
+    "commit": "git-cz"
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node ./verify-commit-msg.js"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   },
   "keywords": [
     "adonisjs",
@@ -31,8 +42,17 @@
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint-plugin-flowtype": "^3.4.2",
+    "yorkie": "^2.0.0"
+  },
   "autoload": {
     "App": "./app"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
