@@ -44,8 +44,19 @@ class EasynoteController {
         //   .sha256()
         //   .update(tags)
         //   .digest("hex")
+        console.log(tags.length >= tagList.length)
         if (tags.length >= tagList.length) finaliyTagList.push(noteid)
       })
+    }
+    if (!finaliyTagList.length && (keywordList || tagList)) {
+      response.json({
+        message: '没有符合该标签组合的内容!',
+        result: {
+          data: [],
+          total: 0
+        }
+      })
+      return
     }
     let noteRes = await Easynote.query()
       .orderBy('id', 'desc')
@@ -57,8 +68,9 @@ class EasynoteController {
           })
         }
         if (isSelf === 'true') {
-          console.log(isSelf)
           builder.where('user_id', uid)
+        } else {
+          builder.where('isPublic', 1)
         }
         return builder
       })
@@ -84,7 +96,7 @@ class EasynoteController {
    * POST easynote
    */
   async store({ request, response, session }) {
-    const { note, tags } = request.all()
+    const { note, tags, isPublic } = request.all()
     const uid = request.userInfo.id
     if (!note || (tags && tags.length > 5)) {
       response.status(412).json({
@@ -95,7 +107,8 @@ class EasynoteController {
     try {
       let easynoteRes = await Easynote.create({
         user_id: uid,
-        note: note
+        note: note,
+        isPublic: isPublic
       })
       await easynoteRes.tags().attach(tags)
       response.json({
@@ -118,7 +131,6 @@ class EasynoteController {
       .with('user')
       .with('tags')
       .fetch();
-    console.log(detailRes.rows[0].note.replace(/\n|\r/g, '<br>'))
     let detail = {
       created_at: detailRes.rows[0].created_at,
       id: detailRes.rows[0].id,
