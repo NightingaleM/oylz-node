@@ -3,18 +3,26 @@ const Easynote = use('App/Models/Easynote')
 const Tag = use('App/Models/Tag')
 const Database = use("Database");
 const Hash = use('hash.js')
+
+const NOTHING = {
+  message: '没有符合该搜索组合的内容!',
+  result: {
+    data: [],
+    total: 0
+  }
+}
 class EasynoteController {
   /**
  * Show a list of all easynote.
  * GET easynote
  */
   async index({ request, response, view }) {
-    const { isSelf, page = 1, cout = 20, keywords = "", tags = '' } = request.all()
+    const { isSelf, page = 1, count = 20, keywords = "", tags = '' } = request.all()
     const keywordList = keywords ? keywords.split(',') : null
-    const uid = request.userInfo.id
+    const uid = request.userInfo ? request.userInfo.id : ''
     const tagList = tags ? tags.split(',').sort().map(item => parseInt(item)) : null
     let finaliyTagList = []
-    console.log(isSelf, page, cout, keywordList, tagList)
+    console.log(isSelf, page, count, keywordList, tagList)
 
     if (tagList) {
       let tagsRes = await Database.table('easynote_tag').select(['easynote_id', 'tag_id'])
@@ -48,16 +56,11 @@ class EasynoteController {
         if (tags.length >= tagList.length) finaliyTagList.push(noteid)
       })
     }
-    if (!finaliyTagList.length && (keywordList || tagList)) {
-      response.json({
-        message: '没有符合该标签组合的内容!',
-        result: {
-          data: [],
-          total: 0
-        }
-      })
+    if (!finaliyTagList.length && tagList) {
+      response.json(NOTHING)
       return
     }
+    if (tagList && !finaliyTagList.length) { }
     let noteRes = await Easynote.query()
       .orderBy('id', 'desc')
       .where(builder => {
@@ -77,7 +80,11 @@ class EasynoteController {
       .with('tags')
       .with('user', builder => builder.select('username', 'email'))
       // .fetch();
-      .paginate(page, cout)
+      .paginate(page, count)
+    if (!noteRes.pages.total) {
+      response.json(NOTHING)
+      return
+    }
     response.json({
       message: 'success',
       result: noteRes

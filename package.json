@@ -9,16 +9,6 @@
     "test": "node ace test",
     "commit": "git-cz"
   },
-  "gitHooks": {
-    "pre-commit": "lint-staged",
-    "commit-msg": "node ./verify-commit-msg.js"
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "git add"
-    ]
-  },
   "keywords": [
     "adonisjs",
     "adonis-app"
@@ -38,6 +28,7 @@
     "@adonisjs/session": "^1.0.28",
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.0.6",
+    "@radmen/adonis-lucid-soft-deletes": "^0.1.1",
     "hash.js": "^1.1.7",
     "mysql": "^2.16.0",
     "mysql2": "^1.6.4"

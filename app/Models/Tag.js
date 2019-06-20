@@ -10,6 +10,10 @@ class Tag extends Model {
   easynote() {
     return this.belongsToMany('App/Models/Easynote')
   }
+
+  article() {
+    return this.belongsToMany('App/Models/Article')
+  }
 }
 
 module.exports = Tag

@@ -17,10 +17,13 @@ const Route = use('Route')
 
 Route.on('/').render('welcome')
 Route.get('oy/api/tags', 'TagController.index')
+Route.get('oy/api/article', 'ArticleController.index')
+Route.get('oy/api/article/:id', 'ArticleController.edit')
 Route.group('advertisement', function () {
   Route.resource('/tags', 'TagController')
   Route.resource('/todolist', 'TodoListController')
   Route.resource('/easynote', 'EasynoteController')
+  Route.resource('/article', 'ArticleController')
   // 检测登录状态
   Route.post('/check', 'UserController.checkUserStatus')
 }).prefix('oy/api').middleware('permission')

@@ -1,42 +1,69 @@
 'use strict'
-
-
 const Tag = use('App/Models/Tag')
+const { validate, validateAll } = use('Validator') // 用于表单验证
+
 class TagController {
-  async index({ request }) {
+  /**
+   * Show a list of all tags.
+   * GET tags
+   */
+  async index({ request, response, view }) {
     let tags = await Tag.query().select(['tag', 'id'])
     return tags
   }
 
-  store() {
-    return "创建资源的请求"
+  /**
+   * Render a form to be used for creating a new receipt.
+   * GET tags/create
+   */
+  async create({ request, response, view }) {
   }
 
-  async show({
-    params
-  }) {
-
+  /**
+   * Create/save a new receipt.
+   * POST tags
+   */
+  async store({ request, response, session }) {
+    const { tag } = request.all()
+    try {
+      let tagRes = await Tag.create({ tag })
+      console.log(tagRes)
+      response.json({
+        a: 'fasdfa'
+      })
+    } catch (e) {
+      throw (e)
+    }
   }
 
-  update({
-    params
-  }) {
-    return `更新单个资源的请求 ${params.id}`
+  /**
+   * Display a single receipt.
+   * GET tags/:id
+   */
+  async show({ params, request, response, view }) {
   }
 
-  destroy({
-    params
-  }) {
-    return `删除资源的请求 ${params.id}`
+  /**
+   * Render a form to update an existing receipt.
+   * GET tags/:id/edit
+   */
+  async edit({ params, request, response, view }) {
   }
-  create() {
-    return `创建资源表单`
+
+  /**
+   * Update receipt details.
+   * PUT or PATCH tags/:id
+   */
+  async update({ params, request, response }) {
   }
-  edit({
-    params
-  }) {
-    return `根据id，获取对应资源放入表单 ${params.id}`
+
+  /**
+   * Delete a receipt with id.
+   * DELETE tags/:id
+   */
+  async destroy({ params, request, response }) {
   }
+
 }
 
 module.exports = TagController
