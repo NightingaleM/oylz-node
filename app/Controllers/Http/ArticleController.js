@@ -15,7 +15,6 @@ class ArticleController {
         .select(['article_id'])
         .where('tag_id', '=', tag)
     }
-    console.log(tagArticleId)
     let articleRes = await Article.query()
       .orderBy('created_at', 'desc')
       .where(builder => {

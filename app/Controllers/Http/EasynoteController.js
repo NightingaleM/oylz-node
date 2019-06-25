@@ -22,8 +22,6 @@ class EasynoteController {
     const uid = request.userInfo ? request.userInfo.id : ''
     const tagList = tags ? tags.split(',').sort().map(item => parseInt(item)) : null
     let finaliyTagList = []
-    console.log(isSelf, page, count, keywordList, tagList)
-
     if (tagList) {
       let tagsRes = await Database.table('easynote_tag').select(['easynote_id', 'tag_id'])
         .where(builder => {
@@ -52,7 +50,6 @@ class EasynoteController {
         //   .sha256()
         //   .update(tags)
         //   .digest("hex")
-        console.log(tags.length >= tagList.length)
         if (tags.length >= tagList.length) finaliyTagList.push(noteid)
       })
     }
