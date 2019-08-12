@@ -22,6 +22,7 @@ class Permission {
       response.status(403).json({
         message: '请登录！'
       })
+      return
     }
     try {
       request.userInfo = user
@@ -32,6 +33,7 @@ class Permission {
         message: 'bad request!!',
         error: e
       })
+      return
     }
   }
 

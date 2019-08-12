@@ -51,8 +51,31 @@ class ArticleController {
    * Create/save a new receipt.
    * POST article
    */
+  // 文章的tag为4
   async store({ request, response, session }) {
-
+    const { title, content, tags = [] } = request.all()
+    if (tags.indexOf(4) < 0) {
+      tags.push(4)
+    }
+    if (!title || !content) {
+      response.status(412).json({
+        message: '请填写完整内容'
+      })
+      return
+    }
+    try {
+      let ArticleRes = await Article.create({
+        title,
+        content
+      })
+      await ArticleRes.tags().attach(tags)
+      response.json({
+        message: 'success',
+        result: null
+      })
+    } catch (e) {
+      throw (e)
+    }
   }
 
   /**

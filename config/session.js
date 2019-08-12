@@ -36,7 +36,7 @@ module.exports = {
   | removed when browser closes.
   |
   */
-  clearWithBrowser: true,
+  clearWithBrowser: false,
 
   /*
   |--------------------------------------------------------------------------
@@ -51,7 +51,7 @@ module.exports = {
   |  '2h', '10d', '5y', '2.5 hrs'
   |
   */
-  age: '2h',
+  age: '2d',
 
   /*
   |--------------------------------------------------------------------------
