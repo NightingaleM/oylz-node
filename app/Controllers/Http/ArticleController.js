@@ -8,7 +8,8 @@ class ArticleController {
    * GET article
    */
   async index({ request, response, view }) {
-    const { tag = null, page = 1, count = 5 } = request.all()
+    const { isSelf = false, tag = null, page = 1, count = 5 } = request.all()
+    const uid = request.userInfo ? request.userInfo.id : ''
     let tagArticleId
     if (tag) {
       tagArticleId = await Database.table('article_tag')
@@ -21,9 +22,17 @@ class ArticleController {
         if (tagArticleId) {
           builder.where('id', '=', tagArticleId)
         }
-        return builder
+        if (isSelf) {
+          builder.where('user_id', uid)
+        }
+
       })
-      .with('tags')
+      .with('tags', builder => {
+        builder.setVisible(['tag'])
+      })
+      .with('user', builder => {
+        builder.setVisible(['username', 'sex'])
+      })
       .paginate(page, count)
     if (!articleRes.pages.total) {
       response.json({
@@ -53,6 +62,7 @@ class ArticleController {
    */
   // 文章的tag为4
   async store({ request, response, session }) {
+    const uid = request.userInfo.id
     const { title, content, tags = [] } = request.all()
     if (tags.indexOf(4) < 0) {
       tags.push(4)
@@ -66,7 +76,8 @@ class ArticleController {
     try {
       let ArticleRes = await Article.create({
         title,
-        content
+        content,
+        user_id: uid
       })
       await ArticleRes.tags().attach(tags)
       response.json({

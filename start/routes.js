@@ -17,8 +17,8 @@ const Route = use('Route')
 
 Route.on('/').render('welcome')
 Route.get('oy/api/tags', 'TagController.index')
-Route.get('oy/api/article', 'ArticleController.index')
-Route.get('oy/api/article/:id', 'ArticleController.edit')
+Route.get('oy/papi/article', 'ArticleController.index')
+Route.get('oy/papi/article/:id', 'ArticleController.edit')
 Route.group('advertisement', function () {
   Route.resource('/tags', 'TagController')
   Route.resource('/todolist', 'TodoListController')
@@ -27,7 +27,6 @@ Route.group('advertisement', function () {
   // 检测登录状态
   Route.post('/check', 'UserController.checkUserStatus')
 }).prefix('oy/api').middleware('permission')
-
 Route.resource('oy/api/user', 'UserController')
 // 登录
 Route.post('oy/api/login', 'UserController.login')
