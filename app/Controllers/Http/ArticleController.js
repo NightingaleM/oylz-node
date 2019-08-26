@@ -25,7 +25,7 @@ class ArticleController {
         if (isSelf) {
           builder.where('user_id', uid)
         }
-
+        builder.where('delete_at', null)
       })
       .with('tags', builder => {
         builder.setVisible(['tag'])
@@ -63,9 +63,9 @@ class ArticleController {
   // 文章的tag为4
   async store({ request, response, session }) {
     const uid = request.userInfo.id
-    const { title, content, tags = [] } = request.all()
-    if (tags.indexOf(4) < 0) {
-      tags.push(4)
+    const { title, content, tag = [] } = request.all()
+    if (tag.indexOf(4) < 0) {
+      tag.push(4)
     }
     if (!title || !content) {
       response.status(412).json({
@@ -79,7 +79,7 @@ class ArticleController {
         content,
         user_id: uid
       })
-      await ArticleRes.tags().attach(tags)
+      await ArticleRes.tags().attach(tag)
       response.json({
         message: 'success',
         result: null
@@ -108,6 +108,44 @@ class ArticleController {
    * PUT or PATCH article/:id
    */
   async update({ params, request, response }) {
+    const { tag_id = [], title, content, tag = [] } = request.all()
+    const { id } = params
+    const uid = request.userInfo.id
+    if (tag.indexOf(4) < 0) {
+      tag.push(4)
+    }
+    if (!title || !content) {
+      response.status(412).json({
+        message: '请填写完整内容'
+      })
+      return
+    }
+    try {
+      let mvTagArticleRes = await Database.table('article_tag')
+        .where(builder => {
+          builder.where('article_id', id)
+          builder.where('tag_id', 'in', tag_id)
+        })
+        .del()
+      let ArticleRes = await Article.query()
+        .where(builder => {
+          builder.where('id', '=', id)
+          builder.where('user_id', '=', uid)
+        })
+        .update({
+          title: title,
+          content: content
+        })
+
+      let aaa = await Article.findBy('id', id)
+      await aaa.tags().attach(tag)
+      response.json({
+        message: "update success",
+        result: null
+      })
+    } catch (e) {
+      throw (e)
+    }
   }
 
   /**
@@ -115,6 +153,26 @@ class ArticleController {
    * DELETE article/:id
    */
   async destroy({ params, request, response }) {
+    const { id } = params
+    const uid = request.userInfo.id
+    const now = new Date()
+    try {
+      let destroyRes = await Article.query()
+        .where(builder => {
+          builder.where('id', '=', id)
+          builder.where('user_id', '=', uid)
+        })
+        .update({
+          delete_at: now
+        })
+      console.log(destroyRes)
+      response.json({
+        message: "delete success",
+        result: null
+      })
+    } catch (e) {
+      throw (e)
+    }
   }
 }
 
