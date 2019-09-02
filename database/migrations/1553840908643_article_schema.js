@@ -12,6 +12,8 @@ class ArticleSchema extends Schema {
       table.dateTime('delete_at').defaultTo(null)
       table.integer('user_id').unsigned() //unsigned为无符号整数
       table.foreign('user_id').references('users.id') //将已存在的键设置为外键，和references搭配使用
+      table.integer('is_public').unsigned().defaultTo(1)
+      table.integer('is_stick').unsigned()
       table.timestamps()
     })
   }

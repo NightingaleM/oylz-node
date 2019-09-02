@@ -16,24 +16,60 @@ class ArticleController {
         .select(['article_id'])
         .where('tag_id', '=', tag)
     }
+    let stickArticles
+    let stickIds
+    if (page === 1) {
+      let stickArticlesRes = await Article.query()
+        .orderBy('created_at', 'desc')
+        .where(builder => {
+          builder.where('is_public', 1)
+          builder.where('is_stick', 1)
+          if (isSelf) {
+            builder.where('user_id', uid)
+          } else {
+            builder.where('is_public', 1)
+          }
+        })
+        .with('user', builder => {
+          builder.setVisible(['username', 'sex'])
+        })
+        .with('tags', builder => {
+          builder.setVisible(['tag'])
+        })
+        .paginate(1, 2)
+
+
+      stickArticles = [...stickArticlesRes.rows]
+      stickIds = stickArticlesRes.rows.map(e => e.id)
+    }
     let articleRes = await Article.query()
       .orderBy('created_at', 'desc')
       .where(builder => {
+        if (stickIds) {
+          builder.where('id', '!=', stickIds)
+        }
         if (tagArticleId) {
           builder.where('id', '=', tagArticleId)
         }
         if (isSelf) {
           builder.where('user_id', uid)
+        } else {
+          builder.where('is_public', 1)
         }
         builder.where('delete_at', null)
-      })
-      .with('tags', builder => {
-        builder.setVisible(['tag'])
       })
       .with('user', builder => {
         builder.setVisible(['username', 'sex'])
       })
+      .with('tags', builder => {
+        builder.setVisible(['tag'])
+      })
       .paginate(page, count)
+    console.log(articleRes)
+    articleRes.rows.unshift(...stickArticles)
+    // let merge = Object.assign(articleRes.pages)
+    // merge.data = [...stickArticles, ...articleRes.rows]
+
     if (!articleRes.pages.total) {
       response.json({
         message: '没有符合该搜索组合的内容!',
