@@ -39,7 +39,6 @@ class UserController {
         result: null
       })
     }
-    console.log("ffffffffffffffffffffff")
     const newUserInfo = request.only(['username', 'email', 'password', 'sex'])
     const user = await User.create(newUserInfo)
     return {

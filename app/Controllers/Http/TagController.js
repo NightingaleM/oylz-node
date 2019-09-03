@@ -27,7 +27,6 @@ class TagController {
     const { tag } = request.all()
     try {
       let tagRes = await Tag.create({ tag })
-      console.log(tagRes.id)
       response.json({
         id: tagRes.id
       })

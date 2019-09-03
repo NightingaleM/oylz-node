@@ -2,6 +2,16 @@
 const Article = use('App/Models/Article')
 const Database = use("Database");
 
+const CheckStickNumber = async ({ uid }) => {
+  let countRes = await Article.query()
+    .where(builder => {
+      builder.where('user_id', uid)
+      builder.where('is_stick', 1)
+      builder.where('delete_at', null)
+    })
+    .getCount()
+  return countRes || 0
+}
 class ArticleController {
   /**
    * Show a list of all article.
@@ -16,7 +26,7 @@ class ArticleController {
         .select(['article_id'])
         .where('tag_id', '=', tag)
     }
-    let stickArticles
+    let stickArticles = []
     let stickIds
     if (page === 1) {
       let stickArticlesRes = await Article.query()
@@ -65,11 +75,8 @@ class ArticleController {
         builder.setVisible(['tag'])
       })
       .paginate(page, count)
-    console.log(articleRes)
-    articleRes.rows.unshift(...stickArticles)
-    // let merge = Object.assign(articleRes.pages)
-    // merge.data = [...stickArticles, ...articleRes.rows]
 
+    articleRes.rows.unshift(...stickArticles)
     if (!articleRes.pages.total) {
       response.json({
         message: '没有符合该搜索组合的内容!',
@@ -99,7 +106,16 @@ class ArticleController {
   // 文章的tag为4
   async store({ request, response, session }) {
     const uid = request.userInfo.id
-    const { title, content, tag = [] } = request.all()
+    const { title, content, tag = [], isPublic = 1, isStick = 0 } = request.all()
+    if (isStick) {
+      let countRes = await CheckStickNumber({ uid })
+      if (countRes >= 2) {
+        response.status(412).json({
+          message: '置顶文章不能超过两篇'
+        })
+        return
+      }
+    }
     if (tag.indexOf(4) < 0) {
       tag.push(4)
     }
@@ -113,7 +129,9 @@ class ArticleController {
       let ArticleRes = await Article.create({
         title,
         content,
-        user_id: uid
+        user_id: uid,
+        is_public: isPublic,
+        is_stick: isStick
       })
       await ArticleRes.tags().attach(tag)
       response.json({
@@ -144,9 +162,18 @@ class ArticleController {
    * PUT or PATCH article/:id
    */
   async update({ params, request, response }) {
-    const { tag_id = [], title, content, tag = [] } = request.all()
+    const { tag_id = [], title, content, tag = [], isPublic = 1, isStick = 0 } = request.all()
     const { id } = params
     const uid = request.userInfo.id
+    if (isStick) {
+      let countRes = await CheckStickNumber({ uid })
+      if (countRes >= 2) {
+        response.status(412).json({
+          message: '置顶文章不能超过两篇'
+        })
+        return
+      }
+    }
     if (tag.indexOf(4) < 0) {
       tag.push(4)
     }
@@ -170,7 +197,9 @@ class ArticleController {
         })
         .update({
           title: title,
-          content: content
+          content: content,
+          is_public: isPublic,
+          is_stick: isStick
         })
 
       let aaa = await Article.findBy('id', id)
@@ -201,7 +230,6 @@ class ArticleController {
         .update({
           delete_at: now
         })
-      console.log(destroyRes)
       response.json({
         message: "delete success",
         result: null
