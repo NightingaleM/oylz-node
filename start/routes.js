@@ -18,7 +18,7 @@ const Route = use('Route')
 Route.on('/').render('welcome')
 Route.get('oy/api/tags', 'TagController.index')
 Route.get('oy/papi/article', 'ArticleController.index')
-Route.get('oy/papi/article/:id', 'ArticleController.edit')
+Route.get('oy/papi/article/:id', 'ArticleController.show')
 Route.group('advertisement', function () {
   Route.resource('/tags', 'TagController')
   Route.resource('/todolist', 'TodoListController')

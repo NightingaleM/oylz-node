@@ -77,6 +77,12 @@ class ArticleController {
       .paginate(page, count)
 
     articleRes.rows.unshift(...stickArticles)
+    // if (!isSelf) {
+    //   console.log(articleRes.rows[0])
+    //   articleRes.rows.forEach(e => {
+    //     e.content = e.content.substr(0, 600)
+    //   })
+    // }
     if (!articleRes.pages.total) {
       response.json({
         message: '没有符合该搜索组合的内容!',
@@ -148,6 +154,23 @@ class ArticleController {
    * GET article/:id
    */
   async show({ params, request, response, view }) {
+    const { id } = params
+    let articleRes = await Article.query()
+      .where(builder => {
+        builder.where('id', id)
+      })
+      .with('user', builder => {
+        builder.setVisible(['username', 'sex'])
+      })
+      .with('tags', builder => {
+        builder.setVisible(['tag'])
+      })
+      .fetch()
+
+    response.json({
+      message: 'success',
+      result: articleRes
+    })
   }
 
   /**
@@ -155,6 +178,7 @@ class ArticleController {
    * GET article/:id/edit
    */
   async edit({ params, request, response, view }) {
+
   }
 
   /**
