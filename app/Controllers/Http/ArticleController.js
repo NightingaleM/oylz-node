@@ -158,6 +158,7 @@ class ArticleController {
     let articleRes = await Article.query()
       .where(builder => {
         builder.where('id', id)
+        builder.where('delete_at', null)
       })
       .with('user', builder => {
         builder.setVisible(['username', 'sex'])
@@ -166,7 +167,6 @@ class ArticleController {
         builder.setVisible(['tag'])
       })
       .fetch()
-
     response.json({
       message: 'success',
       result: articleRes
