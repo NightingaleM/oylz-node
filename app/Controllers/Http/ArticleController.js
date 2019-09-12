@@ -67,6 +67,7 @@ class ArticleController {
           builder.where('is_public', 1)
         }
         builder.where('delete_at', null)
+        builder.where('is_stick', 0)
       })
       .with('user', builder => {
         builder.setVisible(['username', 'sex'])
