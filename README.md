@@ -12,3 +12,10 @@
 
 
 [adonis](https://adonisjs.com/docs/4.1/installation)
+
+
+
+
+注意：
+1、确保.env文件永远不会上传
+2、引入模块时，不使用import也不使用require，而是使用use

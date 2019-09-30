@@ -12,8 +12,8 @@
 | http://adonisjs.com/docs/4.1/routing
 |
 */
-
 const Route = use('Route')
+
 
 Route.on('/').render('welcome')
 Route.get('oy/api/tags', 'TagController.index')
@@ -32,3 +32,7 @@ Route.resource('oy/api/user', 'UserController')
 Route.post('oy/api/login', 'UserController.login')
 // 登出
 Route.post('oy/api/logout', 'UserController.logout')
+
+// Oss 相关内容
+Route.get('oy/api/oss', 'OssServer.signaOss')
+Route.post('oy/api/ossCallback', 'OssServer.ossCallback')

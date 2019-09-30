@@ -27,7 +27,7 @@ class Permission {
       request.userInfo = user
       await next()
     } catch (e) {
-
+      console.log(e)
       response.status(502).json({
         message: 'bad request!!',
         error: e

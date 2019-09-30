@@ -40,7 +40,8 @@
     "yorkie": "^2.0.0"
   },
   "autoload": {
-    "App": "./app"
+    "App": "./app",
+    "Public": "./public"
   },
   "config": {
     "commitizen": {
