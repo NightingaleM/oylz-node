@@ -53,7 +53,8 @@ class OssServer {
     const policy = Buffer(policyString).toString('base64')
     const Signature = crypto.createHmac('sha1', accessKeySecret).update(policy).digest("base64")
     // let callbackUrl = `http://${callBackIp}${callBakcPort ? ':' + callBakcPort : ''}/acapi/be/ossCallback`
-    let callbackUrl = `http://${callBackIp}${callBakcPort ? ':' + callBakcPort : ''}/oy/api/ossCallback`
+    let callbackUrl = `https://${callBackIp}${callBakcPort ? ':' + callBakcPort : ''}/oy/api/ossCallback`
+    console.log(callbackUrl)
     const callbackBody = {
       "callbackUrl": callbackUrl,
       "callbackHost": `${callBackIp}`,
