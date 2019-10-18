@@ -1,4 +1,5 @@
 'use strict'
+const axios = require('axios')
 const crypto = require("crypto")
 // const initTime = require("Public/initTime")
 const initTimeF = use("Public/initTime")
@@ -54,7 +55,6 @@ class OssServer {
     const Signature = crypto.createHmac('sha1', accessKeySecret).update(policy).digest("base64")
     // let callbackUrl = `http://${callBackIp}${callBakcPort ? ':' + callBakcPort : ''}/acapi/be/ossCallback`
     let callbackUrl = `https://${callBackIp}${callBakcPort ? ':' + callBakcPort : ''}/oy/api/ossCallback`
-    console.log(callbackUrl)
     const callbackBody = {
       "callbackUrl": callbackUrl,
       "callbackHost": `${callBackIp}`,
@@ -77,12 +77,24 @@ class OssServer {
       }
     })
   }
-  ossCallback({ request, response }) {
+  async ossCallback({ request, response }) {
+    const ip = request.ip()
+    console.log(ip)
+    let ipr = await axios({
+      method: 'get',
+      url: 'https://apis.map.qq.com/ws/location/v1/ip',
+      params: {
+        key: 'PA5BZ-MSFK4-H2OUG-D2PBE-VIBGF-VBBKK',
+        ip
+      }
+    })
+    console.log(ipr)
     response.json({
       statusCode: 200,
       message: 'oss参数回调',
       result: {
-        ...request.all()
+        // ...request.all()
+        ipr
       }
     })
   }

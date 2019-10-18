@@ -28,11 +28,10 @@ class ArticleController {
     }
     let stickArticles = []
     let stickIds
-    if (page === 1) {
+    if (parseInt(page) === 1) {
       let stickArticlesRes = await Article.query()
         .orderBy('created_at', 'desc')
         .where(builder => {
-          builder.where('is_public', 1)
           builder.where('is_stick', 1)
           if (isSelf) {
             builder.where('user_id', uid)
@@ -47,8 +46,6 @@ class ArticleController {
           builder.setVisible(['tag'])
         })
         .paginate(1, 2)
-
-
       stickArticles = [...stickArticlesRes.rows]
       stickIds = stickArticlesRes.rows.map(e => e.id)
     }
