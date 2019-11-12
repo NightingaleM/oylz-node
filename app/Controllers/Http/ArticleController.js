@@ -27,7 +27,7 @@ class ArticleController {
         .where('tag_id', '=', tag)
     }
     let stickArticles = []
-    let stickIds
+    let stickIds = []
     if (parseInt(page) === 1) {
       let stickArticlesRes = await Article.query()
         .orderBy('created_at', 'desc')
@@ -52,7 +52,7 @@ class ArticleController {
     let articleRes = await Article.query()
       .orderBy('created_at', 'desc')
       .where(builder => {
-        if (stickIds) {
+        if (stickIds.length) {
           builder.where('id', '!=', stickIds)
         }
         if (tagArticleId) {
