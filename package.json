@@ -28,6 +28,7 @@
     "@adonisjs/session": "^1.0.28",
     "@adonisjs/shield": "^1.0.8",
     "@adonisjs/validator": "^5.0.6",
+    "@adonisjs/websocket": "^1.0.12",
     "@radmen/adonis-lucid-soft-deletes": "^0.1.1",
     "axios": "^0.19.0",
     "hash.js": "^1.1.7",
